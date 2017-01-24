@@ -28,16 +28,23 @@ three = Succ two
 four :: Nat
 four = Succ three
 
+five :: Nat
+five = Succ four
 
 -- | The predecessor of a natural number.
---   
+--
 --   >>> pred Zero
 --   Zero
---   
+--
 --   >>> pred three
 --   Succ (Succ Zero)
---   
-pred = undefined
+--
+pred :: Nat -> Nat
+pred Zero         = Zero
+pred (Succ Zero)  = Zero
+pred (Succ  one)  = one
+-- pred one      = Zero
+
 
 
 -- | True if the given value is zero.
@@ -48,7 +55,9 @@ pred = undefined
 --   >>> isZero two
 --   False
 --
-isZero = undefined
+isZero :: Nat -> Bool
+isZero Zero = True
+isZero _    = False
 
 
 -- | Convert a natural number to an integer.
@@ -59,7 +68,15 @@ isZero = undefined
 --   >>> toInt three
 --   3
 --
-toInt = undefined
+--   pred three
+--   Succ (Succ Zero)
+toInt :: Nat -> Int
+toInt Zero        = 0
+toInt (Succ h)    = 1 + toInt h
+
+
+
+
 
 
 -- | Add two natural numbers.
@@ -75,8 +92,10 @@ toInt = undefined
 --
 --   >>> add two three == add three two
 --   True
---   
-add = undefined
+--
+add :: Nat -> Nat -> Nat
+add n    Zero    = n
+add (x) (Succ y) = Succ (add x y)
 
 
 -- | Subtract the second natural number from the first. Return zero
@@ -84,7 +103,7 @@ add = undefined
 --
 --   >>> sub two one
 --   Succ Zero
---   
+--
 --   >>> sub three one
 --   Succ (Succ Zero)
 --
@@ -94,7 +113,12 @@ add = undefined
 --   >>> sub one three
 --   Zero
 --
-sub = undefined
+sub :: Nat -> Nat -> Nat
+-- sub a b | a==b      = Zero
+--         | otherwise = sub a Zero
+sub Zero       a      = Zero
+sub a        Zero     = a
+sub (Succ x) (Succ y) = sub x y
 
 
 -- | Is the left value greater than the right?
@@ -108,7 +132,11 @@ sub = undefined
 --   >>> gt two two
 --   False
 --
-gt = undefined
+gt :: Nat -> Nat -> Bool
+gt Zero     Zero     = False
+gt Zero     (Succ y) = False
+gt (Succ xx) Zero     = True
+gt (Succ x) (Succ y) = gt x y
 
 
 -- | Multiply two natural numbers.
@@ -125,21 +153,25 @@ gt = undefined
 --   >>> toInt (mult three three)
 --   9
 --
-mult = undefined
+mult :: Nat -> Nat -> Nat
+mult n   Zero     = Zero
+mult (x) (Succ y) = add x (mult x y)
 
 
 -- | Compute the sum of a list of natural numbers.
 --
 --   >>> sum []
 --   Zero
---   
+--
 --   >>> sum [one,Zero,two]
 --   Succ (Succ (Succ Zero))
 --
 --   >>> toInt (sum [one,two,three])
 --   6
 --
-sum = undefined
+sum :: [Nat] -> Nat
+sum []     = Zero
+sum (x:xs) = add x (sum xs)
 
 
 -- | An infinite list of all of the *odd* natural numbers, in order.
