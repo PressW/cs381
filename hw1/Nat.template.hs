@@ -182,4 +182,5 @@ sum (x:xs) = add x (sum xs)
 --   >>> toInt (sum (take 100 odds))
 --   10000
 --
-odds = undefined
+odds :: [Nat]
+odds = Succ Zero : map (add (Succ (Succ Zero))) odds
