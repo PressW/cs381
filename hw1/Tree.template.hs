@@ -185,10 +185,11 @@ inorder (Node n l r) = inorder l ++ [n] ++ inorder r
 -- rightmost (Node _ _ r) = rightmost r
 isBST :: Tree -> Bool
 isBST (Leaf i)     = True
-isBST (Node n l r) = (n >= leftmost l)
-                     && (n >= leftmost r)
-                     && (n < rightmost l)
-                     && (n < rightmost r)
+isBST (Node n l r) = (isBST l)
+                     && (isBST r)
+                     && (n > rightmost l)
+                     && (n <= leftmost r)                    
+               
 
 -- | Check whether a number is contained in a binary search tree.
 --   (You may assume that the given tree is a binary search tree.)
