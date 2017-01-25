@@ -1,3 +1,6 @@
+-- Luay Alshawi: alshawil
+-- Preston Wipf: wipfp
+
 module Tree where
 
 
