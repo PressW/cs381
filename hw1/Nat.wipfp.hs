@@ -1,3 +1,6 @@
+-- Luay Alshawi: alshawil
+-- Preston Wipf: wipfp
+
 module Nat where
 
 import Prelude hiding (Enum(..), sum)
