@@ -44,6 +44,8 @@ data Cmd   = Pen Mode
 --  }
 --
 
+line = Define "line" ["x1", "y1", "x2", "y2"], [Pen Up, Move ("x1", "y1"), Pen Down, Move ("x2", "y2"), Pen Up]
+
 
 
 
@@ -62,6 +64,9 @@ data Cmd   = Pen Mode
 --     move (x,y+h);
 --     pen up;
 --  }
+--
+
+nix = Define "nix" ["x", "y", "w", "h"], [Call "line" ["x", "y", Add "x" "w", Add "y" "h"], Call "line" [Add "x" "w", "y", "x", Add "y" "h"]]
 
 
 
@@ -71,6 +76,9 @@ data Cmd   = Pen Mode
 -- Define a Haskell function steps :: Int -> Prog that constructs a MiniLogo program that draws a staircase of n steps starting from (0,0). Below is a visual illustration of what the generated program should draw for a couple different applications of steps.
 --
 
+steps :: Int -> Prog
+steps 0 = []
+steps n = [Call "line" ["n", "n", "n-1", "n"], Call "line" ["n-1", "n", "n-1", "n-1"]] ++ steps (n-1)
 
 
 
