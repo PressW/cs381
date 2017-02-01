@@ -5,7 +5,6 @@
 module MiniLogo where
 import Prelude
 
-type Num   = Int
 type Var   = String
 type Macro = String
 type Prog  = [Cmd]
@@ -14,8 +13,8 @@ data Mode  = Up
            | Down
            deriving Show
 
-data Expr  = Var
-           | Num
+data Expr  = Ref Var
+           | Val Int
            | Add Expr Expr
 	   deriving Show
 
@@ -38,7 +37,8 @@ data Cmd   = Pen Mode
 --     pen up;
 --  }
 
-line = Define "line" ["x1", "y1", "x2", "y2"], [Pen Up, Move ("x1", "y1"), Pen Down, Move ("x2", "y2"), Pen Up]
+line = Define "line" ["x1", "y1", "x2", "y2"], 
+                     [Pen Up, Move (Ref "x1", Ref "y1"), Pen Down, Move (Ref "x2", Ref "y2"), Pen Up]
 
 
 
@@ -60,9 +60,9 @@ line = Define "line" ["x1", "y1", "x2", "y2"], [Pen Up, Move ("x1", "y1"), Pen D
 --     pen up;
 --  }
 
-nix = Define "nix" ["x", "y", "w", "h"], [
-      Call "line" ["x", "y", Add "x" "w", Add "y" "h"],
-      Call "line" [Add "x" "w", "y", "x", Add "y" "h"] ]
+nix = Define "nix" [Ref "x", Ref "y", Ref "w", Ref "h"], [
+      Call "line" [Ref "x", Ref "y", Add (Ref "x") (Ref "w"), Add (Ref "y") (Ref "h") ],
+      Call "line" [Add (Ref "x") (Ref "w"), Ref "y", Ref "x", Add (Ref "y") (Ref "h") ] ]
 
 
 
@@ -75,7 +75,8 @@ nix = Define "nix" ["x", "y", "w", "h"], [
 
 steps :: Int -> Prog
 steps 0 = []
-steps n = [Call "line" ["n", "n", "n-1", "n"], Call "line" ["n-1", "n", "n-1", "n-1"]] ++ steps (n-1)
+steps n = [Call "line" [Val "n", Val "n", Val "n-1", Val "n"], 
+           Call "line" [Val "n-1", Val "n", Val "n-1", Val "n-1"]] ++ steps (n-1)
 
 
 
