@@ -80,10 +80,18 @@ steps n = [Call "line" [Val "n", Val "n", Val "n-1", Val "n"],
 
 
 
+
+
 -- Problem 5:
 -- Define a Haskell function macros :: Prog -> [Macro] that returns a list of the names of all of the 
 -- macros that are defined anywhere in a given MiniLogo program. Don’t worry about duplicates—if a macro 
 -- is defined more than once, the resulting list may include multiple copies of its name.
+
+macros :: Prog -> [Macro]
+macros [] : []
+macros (x:xs) = case x of
+    Define m _ _ -> m:macros xs
+    otherwise    -> macros xs
 
 
 
@@ -104,6 +112,10 @@ steps n = [Call "line" [Val "n", Val "n", Val "n-1", Val "n"],
 -- additions of literals with the result. For example, given the expression (2+3)+x, optE should return 
 -- the expression 5+x.
 
+optE :: Expr -> Expr
+optE (Add (Val l) (Val r)) = Val $ l + r
+optE otherwise             = otherwise
+
 
 
 
@@ -111,3 +123,11 @@ steps n = [Call "line" [Val "n", Val "n", Val "n-1", Val "n"],
 -- Problem 8:
 -- Define a Haskell function optP :: Prog -> Prog that optimizes all of the expressions contained in a
 -- given program using optE.
+
+optP :: Prog -> Prog
+optP []     = []
+optP (x:xs) = case x of
+    Move (l, r)   -> Move (optE l, optE r):optP xs
+    Call  m es    -> Call m (map optE es):optP xs
+    Define m vs x -> Define m vs (optP x):optP xs
+    otherwise     -> x:optP xs
