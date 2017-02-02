@@ -3,6 +3,7 @@
 
 
 module MiniLogo where
+import Data.List
 import Prelude
 
 type Var   = String
@@ -11,18 +12,18 @@ type Prog  = [Cmd]
 
 data Mode  = Up 
            | Down
-           deriving Show
+           deriving (Show, Eq)
 
 data Expr  = Ref Var
            | Val Int
            | Add Expr Expr
-	   deriving Show
+           deriving (Show, Eq)
 
 data Cmd   = Pen Mode
-           | Move Expr Expr
-	   | Define Macro [Var] Prog
-           | Call Macro Expr
-	   deriving Show
+           | Move (Expr, Expr)
+           | Define Macro [Var] Prog
+           | Call Macro [Expr]
+           deriving (Show, Eq)
 
 
 -- Problem 2:
@@ -37,7 +38,7 @@ data Cmd   = Pen Mode
 --     pen up;
 --  }
 
-line = Define "line" ["x1", "y1", "x2", "y2"], 
+line = Define "line" ["x1", "y1", "x2", "y2"] 
                      [Pen Up, Move (Ref "x1", Ref "y1"), Pen Down, Move (Ref "x2", Ref "y2"), Pen Up]
 
 
@@ -66,7 +67,7 @@ line = Define "line" ["x1", "y1", "x2", "y2"],
 --   line (x,y,x+w,y+h),
 --   line (x+w,y,x,y+h)
 -- }
-nix = Define "nix" [Ref "x", Ref "y", Ref "w", Ref "h"], [
+nix = Define "nix" ["x", "y", "w", "h"] [
       Call "line" [Ref "x", Ref "y", Add (Ref "x") (Ref "w"), Add (Ref "y") (Ref "h") ],
       Call "line" [Add (Ref "x") (Ref "w"), Ref "y", Ref "x", Add (Ref "y") (Ref "h") ] ]
 
@@ -81,8 +82,8 @@ nix = Define "nix" [Ref "x", Ref "y", Ref "w", Ref "h"], [
 
 steps :: Int -> Prog
 steps 0 = []
-steps n = [Call "line" [Val "n", Val "n", Val "n-1", Val "n"], 
-           Call "line" [Val "n-1", Val "n", Val "n-1", Val "n-1"]] ++ steps (n-1)
+steps n = [Call "line" [Val n, Val n, Val (n - 1), Val n], 
+           Call "line" [Val (n - 1), Val n, Val (n - 1), Val (n - 1)]] ++ steps (n - 1)
 
 
 
@@ -94,7 +95,7 @@ steps n = [Call "line" [Val "n", Val "n", Val "n-1", Val "n"],
 -- is defined more than once, the resulting list may include multiple copies of its name.
 
 macros :: Prog -> [Macro]
-macros [] : []
+macros []     = []
 macros (x:xs) = case x of
     Define m _ _ -> m:macros xs
     otherwise    -> macros xs
