@@ -102,7 +102,7 @@ pretty []                      = ""
 pretty (Pen Up:xs)             = "\n  pen up; " ++ pretty xs
 pretty (Pen Down:xs)           = "\n  pen down; " ++ pretty xs
 pretty (Move (l, r):xs)        = "move (" ++ prettyExpr l ++ ", " ++ prettyExpr r ++ "); " ++ pretty xs
-pretty (Call n vars:xs)        = "\n  " ++ n ++ "(" ++ intercalate ", " (map prettyExpr vars)++");" ++ pretty xs
+pretty (Call n vars:xs)        = "\n  " ++ n ++ "(" ++ intercalate ", " (map prettyExpr vars) ++ ");" ++ pretty xs
 pretty (Define m vars prog:xs) = "define " ++ m ++ "(" ++ intercalate ", " vars ++ "){" ++ pretty prog ++ "\n};\n" ++ pretty xs
 
 prettyExpr :: Expr -> String
@@ -143,6 +143,9 @@ prettyExpr (Add l r) = prettyExpr l ++ " + " ++ prettyExpr r
 -- prettyV [] = ""
 -- prettyV [a] = a
 -- prettyV (x:xs) = x ++ "," ++ prettyV xs
+
+
+
 
 
 -- Problem 7:
