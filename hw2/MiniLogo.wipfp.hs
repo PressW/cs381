@@ -109,6 +109,19 @@ macros (x:xs) = case x of
 -- characters). Your pretty-printed program should look similar to the example programs given above; 
 -- however, for simplicity you will probably want to print just one command per line.
 
+pretty :: Prog -> String
+pretty []                      = ""
+pretty (Pen Up:xs)             = "pen up; " ++ pretty xs
+pretty (Pen Down:xs)           = "pen down; " ++ pretty xs
+pretty (Move (l, r):xs)        = "move (" ++ prettyExpr l ++ ", " ++ prettyExpr r ++ "); " ++ pretty xs
+pretty (Call n vars:xs)        = n ++ "(" ++ intercalate ", " (map prettyExpr vars) ++ pretty xs
+pretty (Define m vars prog:xs) = "define " ++ m ++ "(" ++ intercalate ", " vars ++ ") {" ++ pretty prog ++ "}; " ++ pretty xs
+
+prettyExpr :: Expr -> String
+prettyExpr (Val num) = show num
+prettyExpr (Ref str) = str
+prettyExpr (Add l r) = prettyExpr l ++ " + " ++ prettyExpr r
+
 
 
 
