@@ -60,6 +60,12 @@ line = Define "line" ["x1", "y1", "x2", "y2"],
 --     pen up;
 --  }
 
+-- Using only line to draw X
+-- define nix(x,y,w,h)
+-- {
+--   line (x,y,x+w,y+h),
+--   line (x+w,y,x-w,y+h)
+-- }
 nix = Define "nix" [Ref "x", Ref "y", Ref "w", Ref "h"], [
       Call "line" [Ref "x", Ref "y", Add (Ref "x") (Ref "w"), Add (Ref "y") (Ref "h") ],
       Call "line" [Add (Ref "x") (Ref "w"), Ref "y", Ref "x", Add (Ref "y") (Ref "h") ] ]
