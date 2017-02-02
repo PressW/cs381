@@ -48,20 +48,7 @@ line = Define "line" ["x1", "y1", "x2", "y2"]
 -- Problem 3:
 -- Use the line macro you just defined to define a new MiniLogo macro nix (x,y,w,h) that draws a big “X” of
 -- width w and height h, starting from position (x,y). Your definition should not contain any move commands.
---
---  define nix (x,y,w,h) {
---     pen up;
---     move (x,y);
---     pen down;
---     move (x+w,y+h);
---     pen up;
---     move (x+w,y);
---     pen down;
---     move (x,y+h);
---     pen up;
---  }
 
--- Using only line to draw X
 -- define nix(x,y,w,h)
 -- {
 --   line (x,y,x+w,y+h),
@@ -123,8 +110,39 @@ prettyExpr (Val num) = show num
 prettyExpr (Ref str) = str
 prettyExpr (Add l r) = prettyExpr l ++ " + " ++ prettyExpr r
 
-
-
+-- Another way for pretty print
+-- pretty :: Prog -> String
+-- pretty []      = ""
+-- pretty (cmd: progs) = prettyC cmd ++ pretty progs
+-- 
+-- prettyC :: Cmd -> String
+-- prettyC (Pen Up) = "pen up;"
+-- prettyC (Pen Down) = "pen down;"
+-- prettyC (Move exb1 exb2) = "move ( " ++
+--                            prettyExpr exb1 ++
+--                            ", " ++
+--                            prettyExpr exb2 ++
+--                            ");"
+-- prettyC (Define m v p)   = "define " ++
+--                             m ++
+--                             "(" ++
+--                             prettyV v ++
+--                             "){" ++
+--                             pretty p ++
+--                             "};"
+-- prettyC (Call m expr) = "call " ++ m ++
+--                         "(" ++
+--                         concat (intersperse "," (map prettyExpr expr)) ++
+--                         ");"
+-- prettyExpr :: Expr -> String
+-- prettyExpr (Ref var) = var
+-- prettyExpr (Num int) = show int
+-- prettyExpr (Add a b) = prettyExpr a ++ "+" ++ prettyExpr b
+-- 
+-- prettyV :: [Var] -> String
+-- prettyV [] = ""
+-- prettyV [a] = a
+-- prettyV (x:xs) = x ++ "," ++ prettyV xs
 
 
 -- Problem 7:
