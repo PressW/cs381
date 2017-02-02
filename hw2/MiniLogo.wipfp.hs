@@ -64,7 +64,7 @@ line = Define "line" ["x1", "y1", "x2", "y2"],
 -- define nix(x,y,w,h)
 -- {
 --   line (x,y,x+w,y+h),
---   line (x+w,y,x-w,y+h)
+--   line (x+w,y,x,y+h)
 -- }
 nix = Define "nix" [Ref "x", Ref "y", Ref "w", Ref "h"], [
       Call "line" [Ref "x", Ref "y", Add (Ref "x") (Ref "w"), Add (Ref "y") (Ref "h") ],
