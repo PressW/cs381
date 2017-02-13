@@ -65,7 +65,10 @@ cmd (Move x y) = \(mode,point) -> if mode == Down then
 --   >>> prog (steps 2 0 0) start
 --   ((Down,(2,2)),[((0,0),(0,1)),((0,1),(1,1)),((1,1),(1,2)),((1,2),(2,2))])
 prog :: Prog -> State -> (State, [Line])
-prog = undefined
+prog [] state        = (state,[])
+prog (p:progs) state = case cmd p state of
+                       (_s, Just line) -> (\(state,progs) -> (state, line:progs)) $ prog progs _s
+                       (_s, Nothing)   -> prog progs _s
 
 
 --
