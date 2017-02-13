@@ -50,7 +50,7 @@ draw p = let (_,ls) = prog p start in toHTML ls
 --   ((Down,(4,5)),Just ((2,3),(4,5)))
 --
 cmd :: Cmd -> State -> (State, Maybe Line)
-cmd (Pen x)    = \(mode,point) -> ((mode,point), Nothing)
+cmd (Pen x)    = \(mode,point) -> ((x,point), Nothing)
 cmd (Move x y) = \(mode,point) -> if mode == Down then
                                     ((mode,(x,y)), Just (point,(x,y)))
                                   else
