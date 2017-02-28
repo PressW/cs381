@@ -46,7 +46,9 @@ stmt Call           _ _ _ = undefined
 -- fixed repetition loop
 stmt Iterate        _ _ _ = undefined
 -- conditional branch
-stmt If             _ _ _ = undefined
+stmt (If tst t e)   d w r = if test tst w r 
+                                then stmt t d w r
+                                else stmt e d w r
 -- conditional loop
 stmt While          _ _ _ = undefined
 -- empty statement block
