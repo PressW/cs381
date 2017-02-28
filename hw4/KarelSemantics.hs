@@ -1,3 +1,6 @@
+-- Luay Alshawi: alshawil
+-- Preston Wipf: wipfp
+
 module KarelSemantics where
 
 import Prelude hiding (Either(..))
@@ -19,24 +22,34 @@ test (Empty)       _ r = isEmpty r
 
 -- | Valuation function for Stmt.
 stmt :: Stmt -> Defs -> World -> Robot -> Result
+-- end the program
 stmt Shutdown    _ _ r = Done r
+-- move forward
 stmt Move        _ w r = let p = relativePos Front r
                              if isClear p w then OK w (setPos p r)
                                             else Error ("Obstruction at location: " ++ show p)
+-- take a beeper
 stmt PickBeeper  _ w r = let p = getPos r
                          in if hasBeeper p w
                                then OK (decBeeper p w) (incBag r)
                                else Error ("No beeper to pick at: " ++ show p)
+-- leave a beeper
 stmt PutBeeper   _ w r = let p = getPos r in
                          in if isEmpty r then OK (incBeeper p w) (decBag r)
                                              else Error ("No beepers in bag to place at: " ++ show p)
+-- rotate in place
 stmt (Turn dir)  _ w r = OK w (setFacing (cardTurn dir (getFacing r)) r)
-stmt Block       _ _ _ = undefined
-stmt Block       _ _ _ = undefined
-stmt If          _ _ _ = undefined
+-- invoke a macro
 stmt Call        _ _ _ = undefined
+-- fixed repetition loop
 stmt Iterate     _ _ _ = undefined
+-- conditional branch
+stmt If          _ _ _ = undefined
+-- conditional loop
 stmt While       _ _ _ = undefined
+-- statement block
+stmt Block       _ _ _ = undefined
+stmt Block       _ _ _ = undefined
     
     
     
