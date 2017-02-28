@@ -26,7 +26,7 @@ stmt :: Stmt -> Defs -> World -> Robot -> Result
 stmt Shutdown       _ _ r = Done r
 -- move forward
 stmt Move           _ w r = let p = relativePos Front r
-                            in if isClear p w 
+                            in if isClear p w
                                    then OK w (setPos p r)
                                    else Error ("Obstruction at location: " ++ show p)
 -- take a beeper
@@ -36,7 +36,7 @@ stmt PickBeeper     _ w r = let p = getPos r
                                    else Error ("No beeper to pick at: " ++ show p)
 -- leave a beeper
 stmt PutBeeper      _ w r = let p = getPos r
-                            in if isEmpty r 
+                            in if isEmpty r
                                    then OK (incBeeper p w) (decBag r)
                                    else Error ("No beepers in bag to place at: " ++ show p)
 -- rotate in place
@@ -44,11 +44,11 @@ stmt (Turn dir)     _ w r = OK w (setFacing (cardTurn dir (getFacing r)) r)
 -- invoke a macro
 stmt (Call m)       d w r = case lookup m d of
                                     (Just val) -> stmt val d w r
-                                     _         -> Error ("No macro defined for: " ++ m)
+                                    _         -> Error ("No macro defined for: " ++ m)
 -- fixed repetition loop
 stmt Iterate        _ _ _ = undefined
 -- conditional branch
-stmt (If tst t e)   d w r = if test tst w r 
+stmt (If tst t e)   d w r = if test tst w r
                                 then stmt t d w r
                                 else stmt e d w r
 -- conditional loop
@@ -60,9 +60,9 @@ stmt (Block (s:ss)) d w r = case stmt s d w r of
                                   (OK w' r') -> stmt (Block ss) d w' r'  -- recursive stmt call
                                   (Done r')  -> Done r'                  -- bubble up shutdown
                                   (Error m)  -> Error m                  -- raise error
-    
-    
-    
+
+
+
 -- | Run a Karel program.
 prog :: Prog -> World -> Robot -> Result
 prog (m,s) w r = stmt s m w r
