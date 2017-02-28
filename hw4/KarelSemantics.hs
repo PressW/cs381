@@ -23,43 +23,48 @@ test (Empty)       _ r = isEmpty r
 -- | Valuation function for Stmt.
 stmt :: Stmt -> Defs -> World -> Robot -> Result
 -- end the program
-stmt Shutdown       _ _ r = Done r
+stmt Shutdown        _ _ r = Done r
 -- move forward
-stmt Move           _ w r = let p = relativePos Front r
-                            in if isClear p w 
-                                   then OK w (setPos p r)
-                                   else Error ("Obstruction at location: " ++ show p)
+stmt Move            _ w r = let p = relativePos Front r
+                             in if isClear p w 
+                                    then OK w (setPos p r)
+                                    else Error ("Obstruction at location: " ++ show p)
 -- take a beeper
-stmt PickBeeper     _ w r = let p = getPos r
-                            in if hasBeeper p w
-                                   then OK (decBeeper p w) (incBag r)
-                                   else Error ("No beeper to pick at: " ++ show p)
+stmt PickBeeper      _ w r = let p = getPos r
+                             in if hasBeeper p w
+                                    then OK (decBeeper p w) (incBag r)
+                                    else Error ("No beeper to pick at: " ++ show p)
 -- leave a beeper
-stmt PutBeeper      _ w r = let p = getPos r
-                            in if isEmpty r 
-                                   then OK (incBeeper p w) (decBag r)
-                                   else Error ("No beepers in bag to place at: " ++ show p)
+stmt PutBeeper       _ w r = let p = getPos r
+                             in if isEmpty r 
+                                    then OK (incBeeper p w) (decBag r)
+                                    else Error ("No beepers in bag to place at: " ++ show p)
 -- rotate in place
-stmt (Turn dir)     _ w r = OK w (setFacing (cardTurn dir (getFacing r)) r)
+stmt (Turn dir)      _ w r = OK w (setFacing (cardTurn dir (getFacing r)) r)
 -- invoke a macro
-stmt (Call m)       d w r = case lookup m d of
-                                    (Just val) -> stmt val d w r
+stmt (Call m)        d w r = case lookup m d of
+                                    (Just mac) -> stmt mac d w r
                                      _         -> Error ("No macro defined for: " ++ m)
 -- fixed repetition loop
-stmt Iterate        _ _ _ = undefined
+stmt (Iterate i mac) d w r = if i > 0
+                                 then case stmt mac d w r of
+                                            (OK w' r') -> stmt (Iterate (i-1) mac) d w' r'
+                                            (Done r')  -> Done r'
+                                            (Error m)  -> Error m
+                                 else OK w r
 -- conditional branch
-stmt (If tst t e)   d w r = if test tst w r 
-                                then stmt t d w r
-                                else stmt e d w r
+stmt (If tst t e)    d w r = if test tst w r 
+                                 then stmt t d w r
+                                 else stmt e d w r
 -- conditional loop
-stmt While          _ _ _ = undefined
+stmt While           _ _ _ = undefined
 -- empty statement block
-stmt (Block [])     d w r = OK w r
+stmt (Block [])      d w r = OK w r
 -- non-empty statement block
-stmt (Block (s:ss)) d w r = case stmt s d w r of
-                                  (OK w' r') -> stmt (Block ss) d w' r'  -- recursive stmt call
-                                  (Done r')  -> Done r'                  -- bubble up shutdown
-                                  (Error m)  -> Error m                  -- raise error
+stmt (Block (s:ss))  d w r = case stmt s d w r of
+                                   (OK w' r') -> stmt (Block ss) d w' r'  -- recursive stmt call
+                                   (Done r')  -> Done r'                  -- bubble up shutdown
+                                   (Error m)  -> Error m                  -- raise error
     
     
     
