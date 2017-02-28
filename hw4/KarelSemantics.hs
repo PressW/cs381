@@ -20,7 +20,9 @@ test (Empty)       _ r = isEmpty r
 -- | Valuation function for Stmt.
 stmt :: Stmt -> Defs -> World -> Robot -> Result
 stmt Shutdown   _ _ r = Done r
-stmt Move       _ _ _ = undefined
+stmt Move       _ w r = let p = relativePos Front r in
+                            if isClear p w then OK w (setPos p r)
+                                           else Error ("Obstruction at location: " ++ show p)
 stmt PickBeeper _ w r = let p = getPos r
                         in if hasBeeper p w
                               then OK (decBeeper p w) (incBag r)
