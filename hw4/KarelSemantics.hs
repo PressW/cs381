@@ -19,22 +19,24 @@ test (Empty)       _ r = isEmpty r
 
 -- | Valuation function for Stmt.
 stmt :: Stmt -> Defs -> World -> Robot -> Result
-stmt Shutdown   _ _ r = Done r
-stmt Move       _ w r = let p = relativePos Front r in
-                            if isClear p w then OK w (setPos p r)
-                                           else Error ("Obstruction at location: " ++ show p)
-stmt PickBeeper _ w r = let p = getPos r
-                        in if hasBeeper p w
-                              then OK (decBeeper p w) (incBag r)
-                              else Error ("No beeper to pick at: " ++ show p)
-stmt PutBeeper  _ _ _ = undefined
-stmt Turn       _ _ _ = undefined
-stmt Block      _ _ _ = undefined
-stmt Block      _ _ _ = undefined
-stmt If         _ _ _ = undefined
-stmt Call       _ _ _ = undefined
-stmt Iterate    _ _ _ = undefined
-stmt While      _ _ _ = undefined
+stmt Shutdown    _ _ r = Done r
+stmt Move        _ w r = let p = relativePos Front r
+                             if isClear p w then OK w (setPos p r)
+                                            else Error ("Obstruction at location: " ++ show p)
+stmt PickBeeper  _ w r = let p = getPos r
+                         in if hasBeeper p w
+                               then OK (decBeeper p w) (incBag r)
+                               else Error ("No beeper to pick at: " ++ show p)
+stmt PutBeeper   _ w r = let p = getPos r in
+                         in if isEmpty r then OK (incBeeper p w) (decBag r)
+                                             else Error ("No beepers in bag to place at: " ++ show p)
+stmt (Turn dir)  _ w r = OK w (setFacing (cardTurn dir (getFacing r)) r)
+stmt Block       _ _ _ = undefined
+stmt Block       _ _ _ = undefined
+stmt If          _ _ _ = undefined
+stmt Call        _ _ _ = undefined
+stmt Iterate     _ _ _ = undefined
+stmt While       _ _ _ = undefined
     
     
     
