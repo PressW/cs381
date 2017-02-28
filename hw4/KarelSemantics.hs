@@ -42,7 +42,9 @@ stmt PutBeeper      _ w r = let p = getPos r
 -- rotate in place
 stmt (Turn dir)     _ w r = OK w (setFacing (cardTurn dir (getFacing r)) r)
 -- invoke a macro
-stmt Call           _ _ _ = undefined
+stmt (Call m)       d w r = case lookup m d of
+                                    (Just val) -> stmt val d w r
+                                     _         -> Error ("No macro defined for: " ++ m)
 -- fixed repetition loop
 stmt Iterate        _ _ _ = undefined
 -- conditional branch
