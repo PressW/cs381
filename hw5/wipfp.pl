@@ -53,32 +53,95 @@ parent(selma,ling).
 %%
 
 % 1. Define a predicate `child/2` that inverts the parent relationship.
+child(X,Y) :-
+    parent(Y,X),
+    parent(Z,X),
+    Y \= Z.
 
 
 % 2. Define two predicates `isMother/1` and `isFather/1`.
+isMother(X) :-
+    female(X),
+    parent(X,_).
+
+mother(X,Y) :-
+    female(X),
+    parent(X,Y).
+
+isFather(X) :-
+    male(X),
+    parent(X,_).
+
+father(X,Y) :-
+    male(X),
+    parent(X,Y).
 
 
 % 3. Define a predicate `grandparent/2`.
+grandparent(X,Z) :-
+    parent(X,Y),
+    parent(Y,Z).
 
 
 % 4. Define a predicate `sibling/2`. Siblings share at least one parent.
+sibling(Y,Z) :-
+    parent(X,Y),
+    parent(X,Z),
+    Y \= Z.
+% Breaks becuase Abe is only considered to have 1 parent...
+% mother(X,Y), mother(X,Z), father(W,Y), father(W,Z), Y \= Z.
 
 
 % 5. Define two predicates `brother/2` and `sister/2`.
+brother(X,Y) :-
+    sibling(X,Y),
+    male(X).
+
+sister(X,Y) :-
+    sibling(X,Y),
+    female(X).
 
 
 % 6. Define a predicate `siblingInLaw/2`. A sibling-in-law is either married to
 %    a sibling or the sibling of a spouse.
+siblingInLaw(X,Y) :-
+    sibling(Y,Z),
+    married(X,Z)|
+    sibling(X,Z),
+    married(Y,Z).
 
 
 % 7. Define two predicates `aunt/2` and `uncle/2`. Your definitions of these
 %    predicates should include aunts and uncles by marriage.
+aunt(X,Y) :-
+    sibling(X,Z),
+    parent(Z,Y),
+    female(X)|
+    siblingInLaw(X,Z),
+    parent(Z,Y),
+    female(X).
+
+uncle(X,Y) :-
+    sibling(X,Z),
+    parent(Z,Y),
+    male(X)|
+    siblingInLaw(X,Z),
+    parent(Z,Y),
+    male(X).
 
 
 % 8. Define the predicate `cousin/2`.
+cousin(W,X) :-
+    child(W,Y),
+    sibling(Y,Z),
+    parent(Z,X).
 
 
 % 9. Define the predicate `ancestor/2`.
+ancestor(X,Z) :-
+    parent(X,Y),
+    ancestor(Y,Z)|
+    parent(X,Z).
 
 
 % Extra credit: Define the predicate `related/2`.
@@ -95,5 +158,3 @@ parent(selma,ling).
 
 % 2. Define the predicate `prog/3`, which describes the effect of executing a
 %    program on the stack.
-
-
