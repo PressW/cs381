@@ -155,16 +155,23 @@ ancestor(X,Z) :-
 % related(X,Y) :- siblingInLaw(X,Y).
 % related(X,Y) :- sibling(X,Y).
 related(X,Y) :-
+	% X is an ancestor of Y
 	ancestor(X,Y)|
+	% Y is an ancestor of X
 	ancestor(Y,X)|
+	% X and Y are siblings
 	sibling(X,Y)|
+	% X and Y are maarried
 	married(X,Y)|
+	% X and Y share a common ancestor Z
 	ancestor(Z,X),
 	ancestor(Z,Y),
 	X \= Y|
+	% X and Y share a common descendent Z
 	ancestor(X,Z),
 	ancestor(Y,Z),
 	X \= Y|
+	% Y and W share a common ancestor Z, while W is also a common descendent of X and Z
 	ancestor(Z,Y),
 	ancestor(Z,W),
 	ancestor(X,W),
