@@ -145,15 +145,30 @@ ancestor(X,Z) :-
 
 
 % Extra credit: Define the predicate `related/2`.
-related(X,Y) :- ancestor(X,Y).
-related(X,Y) :- ancestor(Y,X).
-related(X,Y) :- aunt(X,Y).
-related(X,Y) :- aunt(Y,X).
-related(X,Y) :- uncle(X,Y).
-related(X,Y) :- uncle(Y,X).
-related(X,Y) :- cousin(X,Y).
-related(X,Y) :- siblingInLaw(X,Y).
-related(X,Y) :- sibling(X,Y).
+% related(X,Y) :- ancestor(X,Y).
+% related(X,Y) :- ancestor(Y,X).
+% related(X,Y) :- aunt(X,Y).
+% related(X,Y) :- aunt(Y,X).
+% related(X,Y) :- uncle(X,Y).
+% related(X,Y) :- uncle(Y,X).
+% related(X,Y) :- cousin(X,Y).
+% related(X,Y) :- siblingInLaw(X,Y).
+% related(X,Y) :- sibling(X,Y).
+related(X,Y) :-
+	ancestor(X,Y)|
+	ancestor(Y,X)|
+	sibling(X,Y)|
+	married(X,Y)|
+	ancestor(Z,X),
+	ancestor(Z,Y),
+	X \= Y|
+	ancestor(X,Z),
+	ancestor(Y,Z),
+	X \= Y|
+	ancestor(Z,Y),
+	ancestor(Z,W),
+	ancestor(X,W),
+	X \= Y.
 
 
 %%
